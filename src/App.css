@@ -5,6 +5,7 @@ html {
 }
 #MuiForm {
     margin-top: 30px;
+    margin-bottom: 30px;
     width: 18vw;
 }
 #cardContainer {

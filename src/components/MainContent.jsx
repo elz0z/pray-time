@@ -28,8 +28,6 @@ export default function MainContent() {
     const countryObj = countryList.find((country) => { return country.apiName === event.target.value })
     setCountry(countryObj)
   }
-
-
   const [time, setTime] = React.useState("");
   const [date, setDate] = React.useState("");
   const [timer, setTimer] = React.useState("");
@@ -57,7 +55,6 @@ export default function MainContent() {
       apiName: "JO",
     }
   ]
-
   const prayerList = [
     { key: "Fajr", displayName: "الفجر" },
     { key: "Dhuhr", displayName: "الظهر" },
@@ -65,21 +62,21 @@ export default function MainContent() {
     { key: "Maghrib", displayName: "المغرب" },
     { key: "Isha", displayName: "العشاء" },
   ]
+
   const getTime = async () => {
     const response = await axios.get(`https://api.aladhan.com/v1/timingsByCity/10-04-2024?country=${country.apiName}&city=`)
     setTime(response.data.data.timings);
   }
+
   React.useEffect(() => {
     getTime()
   }, [country])
-
   React.useEffect(() => {
     const interval = setInterval(() => {
       countDownTimer()
     }, 1000)
 
     setDate(moment().format("MMM Do YYYY | h:mm"))
-
     return () => clearInterval(interval);
   }, [time])
 
@@ -105,11 +102,12 @@ export default function MainContent() {
     } else {
       prayerIndex = 0
     }
+
     setNextPrayerIndex(prayerIndex)
 
-    const nextPrayerObj = prayerList[prayerIndex]
-    const nextPrayerTime = time[nextPrayerObj.key]
-    let remainingTime = moment(nextPrayerTime, "hh:mm").diff(momentNow)
+    const nextPrayerObj = prayerList[prayerIndex];
+    const nextPrayerTime = time[nextPrayerObj.key];
+    let remainingTime = moment(nextPrayerTime, "hh:mm").diff(momentNow);
     if (prayerIndex === 0) {
       const remTime = momentNow.diff(moment("02:00:00", "h:mm:ss"))
       remainingTime = moment(nextPrayerTime, "hh:mm").diff(remTime)
@@ -133,8 +131,6 @@ export default function MainContent() {
       {/*** TOP ROW END */}
       < Divider style={{ borderColor: "white", opacity: "0.3" }
       } />
-
-
       {/* PRAYER CARDS */}
       <Stack id="cardContainer" justifyContent="space-between" direction="row" >
         <Prayer name={"الفجر"} time={time.Fajr} img={fajr} />
@@ -143,7 +139,6 @@ export default function MainContent() {
 
         <Prayer name={"العصر"} time={time.Asr} img={asr} />
 
-
         <Prayer name={"المغرب"} time={time.Maghrib} img={maghrib} />
 
         <Prayer name={"العشاء"} time={time.Isha} img={isha} />
@@ -151,9 +146,7 @@ export default function MainContent() {
       </Stack>
       {/*### END PRAYER CARDS*/}
 
-
       {/*SELECT CITY*/}
-
       <Stack style={{
         marginTop: "40px",
       }} direction="row" justifyContent="center ">
@@ -161,7 +154,6 @@ export default function MainContent() {
           <InputLabel id="demo-simple-select-label">
             <span>المدينة</span>
           </InputLabel>
-
           <Select
             value={country.apiName}
             style={{
@@ -179,9 +171,7 @@ export default function MainContent() {
           </Select>
         </FormControl>
       </Stack>
-
       {/*###SELECT CITY*/}
-
     </>
   );
 }
