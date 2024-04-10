@@ -1,0 +1,64 @@
+@import url("https://fonts.googleapis.com/css2?family=Reem+Kufi+Fun:wght@400..700&display=swap");
+html {
+    direction: rtl;
+    font-family: "Reem Kufi Fun", sans-serif !important;
+}
+#MuiForm {
+    margin-top: 30px;
+    width: 18vw;
+}
+#cardContainer {
+    margin-top: 50px;
+}
+.card {
+    width: 19%;
+}
+.cardMedia {
+    height: 140px;
+}
+
+@media (width < 768px) {
+    #MuiForm {
+        width: 35vh;
+        margin-bottom: 40px;
+        text-align: center;
+    }
+    h3 {
+        margin-top: 5px;
+    }
+    #cardContainer {
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+        gap: 10px;
+        text-align: center;
+    }
+    .card {
+        width: 48%;
+        margin: 0;
+        height: 270px;
+    }
+    .cardMedia {
+        height: 155px;
+        margin: 0;
+    }
+    .time {
+        font-size: 40px !important;
+    }
+}
+@media (width < 360px) {
+    .card {
+        width: 90%;
+        height: 300px;
+    }
+    .cardMedia {
+        height: 170px;
+    }
+    #MuiForm {
+        width: 80vw;
+        margin-top: 10px;
+    }
+    #cardContainer {
+        gap: 20px;
+    }
+}
