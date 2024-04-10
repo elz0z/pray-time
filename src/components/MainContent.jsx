@@ -13,13 +13,11 @@ import duhr from "./../assets/duhr.jpeg"
 import asr from "./../assets/asr.jpeg"
 import maghrib from "./../assets/maghrib.jpeg"
 import isha from "./../assets/isha.jpeg"
+import moment from 'moment';
+import "moment/dist/locale/ar-dz";
 
 export default function MainContent() {
-
-  const getTime = async (con) => {
-    const response = await axios.get(`https://api.aladhan.com/v1/timingsByCity/10-04-2024?country=${con}&city=`)
-    setTime(response.data.data.timings);
-  }
+  moment.locale("ar");
 
   const [country, setCountry] = React.useState({
     displayName: "السعودية",
@@ -31,13 +29,11 @@ export default function MainContent() {
     setCountry(countryObj)
   }
 
-  React.useEffect(() => {
-    getTime(country.apiName)
-  }, [country])
 
   const [time, setTime] = React.useState("");
-  const [date, setDate] = React.useState("23:11:23");
-
+  const [date, setDate] = React.useState("");
+  const [timer, setTimer] = React.useState("");
+  const [nextPrayerIndex, setNextPrayerIndex] = React.useState(0)
 
   const countryList = [
     {
@@ -62,6 +58,65 @@ export default function MainContent() {
     }
   ]
 
+  const prayerList = [
+    { key: "Fajr", displayName: "الفجر" },
+    { key: "Dhuhr", displayName: "الظهر" },
+    { key: "Asr", displayName: "العصر" },
+    { key: "Maghrib", displayName: "المغرب" },
+    { key: "Isha", displayName: "العشاء" },
+  ]
+  const getTime = async () => {
+    const response = await axios.get(`https://api.aladhan.com/v1/timingsByCity/10-04-2024?country=${country.apiName}&city=`)
+    setTime(response.data.data.timings);
+  }
+  React.useEffect(() => {
+    getTime()
+  }, [country])
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      countDownTimer()
+    }, 1000)
+
+    setDate(moment().format("MMM Do YYYY | h:mm"))
+
+    return () => clearInterval(interval);
+  }, [time])
+
+  function countDownTimer() {
+    const momentNow = moment();
+    let prayerIndex = 1
+    if (
+      momentNow.isAfter(moment(time.Fajr, "hh:mm")) && momentNow.isBefore(moment(time.Dhuhr, "hh:mm"))
+    ) {
+      prayerIndex = 1
+    } else if (
+      momentNow.isAfter(moment(time.Dhuhr, "hh:mm")) && momentNow.isBefore(moment(time.Asr, "hh:mm"))
+    ) {
+      prayerIndex = 2
+    } else if (
+      momentNow.isAfter(moment(time.Asr, "hh:mm")) && momentNow.isBefore(moment(time.Maghrib, "hh:mm"))
+    ) {
+      prayerIndex = 3
+    } else if (
+      momentNow.isAfter(moment(time.Maghrib, "hh:mm")) && momentNow.isBefore(moment(time.Isha, "hh:mm"))
+    ) {
+      prayerIndex = 4
+    } else {
+      prayerIndex = 0
+    }
+    setNextPrayerIndex(prayerIndex)
+
+    const nextPrayerObj = prayerList[prayerIndex]
+    const nextPrayerTime = time[nextPrayerObj.key]
+    let remainingTime = moment(nextPrayerTime, "hh:mm").diff(momentNow)
+    if (prayerIndex === 0) {
+      const remTime = momentNow.diff(moment("02:00:00", "h:mm:ss"))
+      remainingTime = moment(nextPrayerTime, "hh:mm").diff(remTime)
+    }
+    const durationTime = moment.duration(remainingTime);
+    setTimer(`${durationTime.seconds()} : ${durationTime.minutes()} : ${durationTime.hours()}`)
+  }
   return (
     <>
       {/* TOP ROW */}
@@ -71,8 +126,8 @@ export default function MainContent() {
           <h3>{date}</h3>
         </Grid>
         <Grid xs={6}>
-          <h2>الصلاة القادمة</h2>
-          <h3>01:40:00</h3>
+          <h2>باقى على صلاة {prayerList[nextPrayerIndex].displayName}</h2>
+          <h3>{timer}</h3>
         </Grid>
       </Grid >
       {/*** TOP ROW END */}
@@ -118,7 +173,7 @@ export default function MainContent() {
           >
             {countryList.map((country) => {
               return (
-                <MenuItem value={country.apiName}>{country.displayName}</MenuItem>)
+                <MenuItem key={country.apiName} value={country.apiName}>{country.displayName}</MenuItem>)
             })}
 
           </Select>
