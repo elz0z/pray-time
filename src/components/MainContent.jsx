@@ -30,7 +30,7 @@ export default function MainContent() {
   }
   const [time, setTime] = React.useState("");
   const [date, setDate] = React.useState("");
-  const [timer, setTimer] = React.useState("");
+  const [timer, setTimer] = React.useState("--:--:--");
   const [nextPrayerIndex, setNextPrayerIndex] = React.useState(0)
 
   const countryList = [
